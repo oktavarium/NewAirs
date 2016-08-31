@@ -27,7 +27,7 @@ class Review(models.Model):
 class AboutMe(models.Model):
     user_unique = models.CharField(default="unique", max_length=100, primary_key=True)
     user_name = models.CharField(max_length=100, verbose_name="Имя")
-    user_mail = models.CharField(max_length= 100, verbose_name="Почта")
+    user_mail = models.EmailField(max_length= 100, verbose_name="Почта")
     user_phone = models.CharField(max_length=100, verbose_name="Телефон")
     user_insta = models.CharField(max_length=100, verbose_name="Инстаграм")
     user_skype = models.CharField(max_length=100, verbose_name="Скайп")
