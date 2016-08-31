@@ -24,9 +24,7 @@ class ReviewAdmin(admin.ModelAdmin):
 class AboutMeAdmin(admin.ModelAdmin):
     list_display = ("user_name", "user_mail", "user_phone", "user_insta", "user_skype", "user_periskop",
                     "user_vk", "user_fb", "user_tw", "user_copyright")
-
-    def has_add_permission(self, request):
-        return False
+    exclude = ("user_unique",)
 
 
 class StoryAdmin(admin.ModelAdmin):

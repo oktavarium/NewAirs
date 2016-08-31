@@ -3,8 +3,8 @@ from django.utils import timezone
 
 
 class Review(models.Model):
-    user_name = models.CharField(max_length = 100, verbose_name="Имя")
-    user_town = models.CharField(max_length = 100, verbose_name="Город")
+    user_name = models.CharField(max_length=100, verbose_name="Имя")
+    user_town = models.CharField(max_length=100, verbose_name="Город")
     user_text = models.TextField(default="", verbose_name="Текст отзыва")
     answer_text = models.TextField(default="", verbose_name="Текст ответа на отзыв", blank=True)
     created_date = models.DateTimeField(default=timezone.now, verbose_name="Дата написания")
@@ -25,8 +25,9 @@ class Review(models.Model):
 
 
 class AboutMe(models.Model):
-    user_name = models.CharField(max_length = 100, verbose_name="Имя")
-    user_mail = models.CharField(max_length = 100, verbose_name="Почта")
+    user_unique = models.CharField(default="unique", max_length=100, primary_key=True)
+    user_name = models.CharField(max_length=100, verbose_name="Имя")
+    user_mail = models.CharField(max_length= 100, verbose_name="Почта")
     user_phone = models.CharField(max_length=100, verbose_name="Телефон")
     user_insta = models.CharField(max_length=100, verbose_name="Инстаграм")
     user_skype = models.CharField(max_length=100, verbose_name="Скайп")
@@ -51,7 +52,7 @@ class AboutMe(models.Model):
 
 class Story(models.Model):
     story_year = models.DateField(default=timezone.now, verbose_name="Дата события")
-    story_text = models.CharField(max_length = 100, verbose_name="Описание")
+    story_text = models.CharField(max_length=100, verbose_name="Описание")
 
     class Meta():
         verbose_name = "События из жизни"
@@ -62,7 +63,7 @@ class Story(models.Model):
 
 
 class News(models.Model):
-    news_name = models.CharField(max_length = 100, verbose_name="Название новости")
+    news_name = models.CharField(max_length=100, verbose_name="Название новости")
     news_date = models.DateTimeField(default=timezone.now, verbose_name="Дата новости")
     news_text = models.TextField(default="", verbose_name="Текст новости")
     news_image = models.ImageField(upload_to="media", verbose_name="Изображение", null=True)
