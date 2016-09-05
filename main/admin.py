@@ -7,7 +7,7 @@ from .models import News
 
 def make_confirmed(model, request, queryset):
     print(queryset)
-    queryset.update(confirmed = True)
+    queryset.update(confirmed=True)
 make_confirmed.short_description = "Подтвердить выбранные Отзывы"
 
 

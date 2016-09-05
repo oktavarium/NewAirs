@@ -1,0 +1,114 @@
+<html>
+<head>
+
+	{% load static %}
+	<meta charset="UTF-8" />
+
+	<link rel="stylesheet" type='text/css' href="{% static 'css/style.css' %}">
+
+	<script type="text/javascript" src="{% static 'js/jquery-2.1.4.min.js' %}"></script>
+	<script type="text/javascript" src="{% static 'js/jquery.svg.js' %}"></script>
+	<script type="text/javascript" src="{% static 'js/drawing.js' %}"></script>
+
+	<script>
+
+		function resized() {}
+
+	    window.onload = function(){
+	        //
+
+	        // draw 'logo_div' frame
+	        $('#logo_div').svg({ onLoad: function(svg) {
+	            //
+
+				group = svg.group({stroke: 'black', strokeWidth: 1.5});
+				svg.line(group, 1.0, 1.0, 206, 1.0);
+				svg.line(group, 206, 1.0, 206, 159);
+				svg.line(group, 206, 159, 103.5, 197);
+				svg.line(group, 103.5, 197, 1.0, 159);
+				svg.line(group, 1.0, 159, 1.0, 1.0);
+
+				var ln = line(this, 200, 40, 90, 1);
+				svg.line(group, ln.x_pos, ln.y_pos, ln.x_to, ln.y_to);
+
+				var ln2 = line(this, 150, 40, 135, 1);
+				svg.line(group, ln2.x_pos, ln2.y_pos, ln2.x_to, ln2.y_to);
+
+				var ln3 = line(this, 150, 40, 250, 1);
+				svg.line(group, ln3.x_pos, ln3.y_pos, ln3.x_to, ln3.y_to);
+
+				var ln4 = line(this, 150, 40, 280, 1);
+				svg.line(group, ln4.x_pos, ln4.y_pos, ln4.x_to, ln4.y_to);
+
+	        }});
+
+	        $('#logo_div svg').css('position', 'absolute');
+	        $('#logo_div svg').css('top', 0);
+
+	        $(window).resize(resized);
+	        resized();
+
+	        line($('#logo_div svg'), 0, 0, 453, 1);
+	    }
+
+	</script>
+
+</head>
+<body>
+	<div id="page">
+
+	<div id="logo_div"></div>
+
+	<table id="reviews">
+	<tr><td><h1>^</h1></td></tr>
+	<tr><td><h1>.</h1></td></tr>
+	<tr><td class="review_cell">
+		<table class="rv_block">
+			<tr><td rowspan="3" style="vertical-align: top;">AVATAR</td><td>NAME</td><td>__space__</td><td>MAP POINT</td><td>__space__</td><td>DATE</td></tr>
+			<tr><td colspan="5">Review TEXT</td></tr>
+			<tr><td colspan="5">Review REPLY</td></tr>
+		</table>
+	</td></tr>
+	<tr><td class="review_cell">
+		<table class="rv_block">
+			<tr><td rowspan="3" style="vertical-align: top;">AVATAR</td><td>NAME</td><td>__space__</td><td>MAP POINT</td><td>__space__</td><td>DATE</td></tr>
+			<tr><td colspan="5">Review TEXT</td></tr>
+			<tr><td colspan="5">Review REPLY</td></tr>
+		</table>
+	</td></tr>
+	<tr><td class="review_cell">
+		<table class="rv_block">
+			<tr><td rowspan="3" style="vertical-align: top;">AVATAR</td><td>NAME</td><td>__space__</td><td>MAP POINT</td><td>__space__</td><td>DATE</td></tr>
+			<tr><td colspan="5">Review TEXT</td></tr>
+			<tr><td colspan="5">Review REPLY</td></tr>
+		</table>
+	</td></tr>
+	<tr><td class="review_cell">
+		<table class="rv_block">
+			<tr><td rowspan="3" style="vertical-align: top;">AVATAR</td><td>NAME</td><td>__space__</td><td>MAP POINT</td><td>__space__</td><td>DATE</td></tr>
+			<tr><td colspan="5">Review TEXT</td></tr>
+			<tr><td colspan="5" style="padding: 20px;">
+				<table class="review_reply">
+					<tr><td rowspan="2" style="vertical-align: top;">ARROW</td><td>LOBOV ANTHONY</td></tr>
+					<tr><td>REPLY TEXT</td></tr>
+				</table>
+			</td></tr>
+		</table>
+	</td></tr>
+	<tr><td><h1>.</h1></td></tr>
+	<tr><td><h1>^</h1></td></tr>
+	</table>
+
+	<form id="post_review" method="post">
+		{% csrf_token %}
+		{{ form }}
+		<h1>ОСТАВИТЬ ОТЗЫВ</h1><br />
+		<span>Буду признателен, если Вы напишете своё мнение о моей работе. Все отзывы проходят модерацию.</span><br />
+
+		<table><tr><td>* поля, обязательные для заполнения</td>
+		<td><button id="send">ОТПРАВИТЬ</button></td></tr></table>
+	</form>
+
+	</div>
+</body>
+</html>

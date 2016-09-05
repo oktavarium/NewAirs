@@ -1,0 +1,155 @@
+
+* {
+	
+	padding: 0px;
+	margin: 0px;
+}
+
+body {
+
+	background-color: #30302F;
+}
+
+div#content_area {
+
+	position: relative;
+	width: 1364px;
+
+	margin: 0 auto;
+	
+	border: 1px solid white;
+}
+
+div#face_area {
+
+	position: absolute;
+
+	top: 0px;
+	left: 0px;
+
+	width: 100%;
+	height: 640px;
+
+	z-index: 1;
+
+	border: 2px solid orange;
+}
+
+div#lines {
+
+	position: absolute;
+
+	width: 100%;
+	z-index: 1;
+
+	background-size: cover;
+}
+
+div#toolbox_area {
+
+	position: relative;
+
+	top: 0px;
+	left: 0px;
+
+	width: 100%;
+	height: 1870px;
+
+	border: 1px solid red;
+}
+
+div#toolbox  {
+
+	position: relative;
+	margin-top: 950px;
+
+	z-index: 1;
+}
+
+table#toolkit {
+
+	position: relative;
+	margin: 0 auto;
+}
+
+table#toolkit td { text-align: center; vertical-align: top; }
+
+div.toolkit_icon {
+
+	background-size: cover;
+
+	margin: 0 auto;
+
+	width: 190px;
+	min-height: 190px;
+}
+
+div#workstyle_area {
+
+	position: relative;
+
+	top: 0px;
+	left: 0px;
+
+	width: 100%;
+	height: 695px;
+
+	border: 1px solid red;
+}
+
+div#methods_button {
+
+	position: relative;
+
+	width: 100%;
+	border: 3px solid white;
+
+	padding: 5px 0;
+	margin-top: 20px;
+}
+
+div#book_area {
+
+	position: relative;
+
+	top: 0px;
+	left: 0px;
+
+	width: 100%;
+	height: 923px;
+
+	border: 1px solid yellow;
+}
+
+div#book_button {
+
+	position: relative;
+
+	width: 100%;
+	border: 3px solid #F2754B;
+
+	color: #F2754B;
+
+	padding: 5px 0;
+	margin-top: 20px;
+}
+
+div#tail {
+
+	position: absolute;
+
+	width: 276px;
+	border: 1px solid red;
+
+	z-index: 1;
+}
+
+div#footer_area {
+
+	position: relative;
+
+	width: 100%;
+	height: 120px;
+
+	border: 1px solid magenta;
+}
