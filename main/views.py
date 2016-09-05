@@ -1,12 +1,36 @@
 from django.shortcuts import render
-from django.http import HttpResponse, HttpResponseRedirect
+from django.core.mail import send_mail
+from django.http import HttpResponse, JsonResponse
 from django.views.generic.edit import FormView
-from main.forms import ReviewForm
-from . import models
+from django.views.generic import ListView, TemplateView
+from main.forms import ReviewForm, EmailForm
+from main.models import Review, Email
 
 
-def main_page(request):
-    return render(request, 'main/home.html', {})
+class MainView(TemplateView):
+    template_name = "main/home.html"
+
+    def get_context_data(self, **kwargs):
+        context = super(MainView, self).get_context_data(**kwargs)
+        context['form'] = EmailForm()
+        context['reviews'] = Review.objects.filter(to_main=True).order_by('-created_date')[:2]
+        return context
+
+    def post(self, request):
+        if request.is_ajax():
+            form = EmailForm(request.POST)
+            if form.is_valid():
+                form.save()
+                send_mail(
+                    'New message from site by %s' % request.POST["user_name"],
+                    request.POST["user_text"],
+                    request.POST["user_email"],
+                    ['van.denisenko@gmail.com'],
+                    fail_silently=True,
+                )
+                return JsonResponse({'result': 'OK'}, status=200)
+            else:
+                return JsonResponse({'result': 'Error'}, status=400)
 
 
 def about_me(request):
@@ -20,38 +44,37 @@ def toolbox(request):
 def news(request):
     return HttpResponse("News")
 
+class ReviewView(ListView):
+    model = Review
+    template_name = "main/rev_cell.html"
+    context_object_name = "reviews"
+    paginate_by = 3
 
-def reviews(request):
-    if request.method == 'POST':
-        # create a form instance and populate it with data from the request:
-        form = ReviewForm(request.POST)
-        # check whether it's valid:
-        if form.is_valid():
-            print(form.cleaned_data)
-            # process the data in form.cleaned_data as required
-            # ...
-            # redirect to a new URL:
-            return HttpResponseRedirect('/thanks/')
+    def get_context_data(self, **kwargs):
+        context = super(ReviewView, self).get_context_data(**kwargs)
+        context['form'] = ReviewForm()
+        return context
 
-    # if a GET (or any other method) we'll create a blank form
-    else:
-        form = ReviewForm()
+    def get_queryset(self):
+        return Review.objects.filter(confirmed=True).order_by('-created_date')
 
-    return render(request, 'main/reviews.html', {"form": form})
+    def post(self, request):
+        if request.is_ajax():
+            form = ReviewForm(request.POST)
+            if form.is_valid():
+                form.save()
+                return JsonResponse({'result': 'OK'}, status=200)
+            else:
+                return JsonResponse({'result': 'Error'}, status=400)
 
+    def get(self, request, **kwargs):
+        if request.is_ajax():
+            self.object_list = self.get_queryset()
+            context = self.get_context_data(**kwargs)
+            return render(request, "main/reviews_content.html", context)
+        return super(ReviewView, self).get(request, **kwargs)
 
 def contacts(request):
     return HttpResponse("Contacts")
 
-
-class ReviewView(FormView):
-    template_name = 'main/reviews.html'
-    form_class = ReviewForm
-    success_url = '/thanks/'
-
-    def form_valid(self, form):
-        # This method is called when valid form data has been POSTed.
-        # It should return an HttpResponse.
-        print("BEATCH")
-        return super(ReviewView, self).form_valid(form)
 

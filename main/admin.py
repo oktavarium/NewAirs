@@ -3,6 +3,7 @@ from .models import Review
 from .models import AboutMe
 from .models import Story
 from .models import News
+from .models import Email
 
 
 def make_confirmed(model, request, queryset):
@@ -12,7 +13,7 @@ make_confirmed.short_description = "Подтвердить выбранные О
 
 
 class ReviewAdmin(admin.ModelAdmin):
-    list_display = ("confirmed", "is_answered", "user_name", "user_town", "user_text", "created_date")
+    list_display = ("confirmed", "is_answered", "user_name", "user_town", "user_text", "created_date", "to_main")
     readonly_fields = ("user_name", "user_town", "user_text", "created_date")
     actions = [make_confirmed]
     list_filter = ("confirmed", )
@@ -39,3 +40,4 @@ admin.site.register(Review, ReviewAdmin)
 admin.site.register(AboutMe, AboutMeAdmin)
 admin.site.register(Story, StoryAdmin)
 admin.site.register(News, NewsAdmin)
+admin.site.register(Email)

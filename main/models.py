@@ -5,10 +5,11 @@ from django.utils import timezone
 class Review(models.Model):
     user_name = models.CharField(max_length=100, verbose_name="Имя")
     user_town = models.CharField(max_length=100, verbose_name="Город")
-    user_text = models.TextField(default="", verbose_name="Текст отзыва")
+    user_text = models.TextField(max_length=500, default="", verbose_name="Текст отзыва")
     answer_text = models.TextField(default="", verbose_name="Текст ответа на отзыв", blank=True)
     created_date = models.DateTimeField(default=timezone.now, verbose_name="Дата написания")
     confirmed = models.BooleanField(default=False, verbose_name="Подтверждено")
+    to_main = models.BooleanField(default=False, verbose_name="на главную страницу")
 
     class Meta():
         verbose_name = "Отзыв"
@@ -19,6 +20,23 @@ class Review(models.Model):
 
     def get_text_preview(self):
         return self.user_text[:500]
+
+    def __str__(self):
+        return self.user_name
+
+
+class Email(models.Model):
+    user_name = models.CharField(max_length=100, verbose_name="Имя")
+    user_email = models.EmailField(max_length=100, verbose_name="Email")
+    user_text = models.TextField(max_length=500, default="", verbose_name="Текст")
+    created_date = models.DateTimeField(default=timezone.now, verbose_name="Дата написания")
+
+    class Meta():
+        verbose_name = "Письмо"
+        verbose_name_plural = "Письма"
+
+    def publish(self):
+        self.save()
 
     def __str__(self):
         return self.user_name

@@ -1,457 +1,648 @@
 <html>
+
 <head>
-	{% load static %}
-	<meta charset="UTF-8" />
+    {% load static %}
+    <meta charset="UTF-8" />
 
-	<link rel="stylesheet" type='text/css' href="{% static 'css/base.css' %}">
+    <link rel="stylesheet" type='text/css' href="{% static 'css/base.css' %}">
 
-	<script type="text/javascript" src="{% static 'js/jquery-2.1.4.min.js' %}"></script>
-	<script type="text/javascript" src="{% static 'js/jquery.svg.js' %}"></script>
-	<script type="text/javascript" src="{% static 'js/drawing.js' %}"></script>
+    <script type="text/javascript" src="{% static 'js/jquery-2.1.4.min.js' %}"></script>
+    <script type="text/javascript" src="{% static 'js/jquery.svg.js' %}"></script>
+    <script type="text/javascript" src="{% static 'js/drawing.js' %}"></script>
 
-	<script>
+    <script>
+        var _face_image_defs;
+        var _face_image_width = 0;
+        var _face_image_height = 0;
 
-		var _face_image_defs;
-		var _face_image_width = 0;
-		var _face_image_height = 0;
+        function resized() {
+            //
 
-		function resized() {
-			//
+            // emplace lines
+            var _win_width = $(window).width();
+            $('#lines').css('width', _win_width);
 
-			// emplace lines
-			var _win_width = $( window ).width();
-			$('#lines').css( 'width', _win_width );
+            var _origin_lines_width = 1921;
+            var _page_width = 1364;
+            var _can = _win_width;
 
-			var _origin_lines_width = 1921;
-			var _page_width = 1364;
-			var _can = _win_width;
+            if (_win_width <= 1364) _can = 1364;
 
-			if ( _win_width <= 1364 ) _can = 1364;
+            $('#lines').css('left', -(_origin_lines_width - _can) / 2);
+            $('#lines').css('width', _origin_lines_width);
+            $('#lines').css('top', _height - 640);
 
-			$('#lines').css( 'left' , - ( _origin_lines_width - _can) / 2 );
-			$('#lines').css( 'width' , _origin_lines_width );
-			$('#lines').css( 'top' , _height - 640 );
+            $('#lines_box').css('top', 290);
+            $('#lines_box').css('height', $('#lines').height());
 
-			$('#lines_box').css( 'top' , 290 );
-			$('#lines_box').css( 'height' , $('#lines').height() );
+            $('#toolbox').css('margin-top', _height + 350);
 
-			$('#toolbox').css( 'margin-top' , _height + 350 );
+            // emplace TAIL
+            var _before_top = 100;
 
-			// emplace TAIL
-			var _before_top = 100;
+            var _top_line = $('#book_area').offset().top + $('#book_area').height() - _before_top;
+            var _footer_height = $('#footer_area').height();
 
-			var _top_line = $('#book_area').offset().top + $('#book_area').height() - _before_top;
-			var _footer_height = $('#footer_area').height();
+            $('#tail').css('top', _top_line);
+            $('#tail').css('left', ($('#content_area').width() - $('#tail').width()) / 2);
 
-			$('#tail').css( 'top' , _top_line);
-			$('#tail').css( 'left' , ( $('#content_area').width() - $('#tail').width() ) / 2 );
+            $('#tail').css('height', _footer_height + _before_top);
+            $('#tail svg').css('height', $('#tail').height());
 
-			$('#tail').css( 'height' , _footer_height + _before_top );
-			$('#tail svg').css( 'height' , $('#tail').height() );
+            // draw 'face_area' area
+            var _face_svg = $('#face_area').svg('get');
+            var blog_post_height = _face_svg.width() * _face_image_height / _face_image_width;
 
-	        // draw 'face_area' area
-	        var _face_svg = $('#face_area').svg('get');
-	        var blog_post_height = _face_svg.width() * _face_image_height / _face_image_width;
+            if (isNaN(blog_post_height)) return;
 
-	        if ( isNaN( blog_post_height ) ) return;
-
-	        _face_image_defs = '<defs><pattern id="face_area_bg" patternUnits="objectBoundingBox" width="1px" height="1px"><image xlink:href="{% static 'images/face_palm.jpg' %}" x="0" y="0" width="'+_face_svg.width()+'px" height="' + blog_post_height + 'px" /></pattern></defs>'
-			$('#face_area svg').html(_face_image_defs);
+            _face_image_defs = '<defs><pattern id="face_area_bg" patternUnits="objectBoundingBox" width="1px" height="1px"><image xlink:href="{% static 'images/face_palm.jpg ' %}" x="0" y="0" width="' + _face_svg.width() + 'px" height="' + blog_post_height + 'px" /></pattern></defs>'
+            $('#face_area svg').html(_face_image_defs);
 
             var _width = $('#face_area').width() - 1.0;
             var _height = $('#face_area').height() - 1.0;
 
             var _side_height = _height - (0.35 * _width / 2);
 
-			_face_svg.polygon( [[1.0, 1.0],[_width, 1.0],[_width, _side_height],[_width / 2, _height],[1.0, _side_height]],
-			{ fill: 'url(#face_area_bg)', stroke: 'white', strokeWidth: 1.5 });
-		}
+            _face_svg.polygon([
+                [1.0, 1.0],
+                [_width, 1.0],
+                [_width, _side_height],
+                [_width / 2, _height],
+                [1.0, _side_height]
+            ], {
+                fill: 'url(#face_area_bg)',
+                stroke: 'white',
+                strokeWidth: 1.5
+            });
+        }
 
-	    window.onload = function(){
-	        //
+        window.onload = function() {
+            //
 
-	        // define sizes
-	        var _content_width = $('#content_area').width();
-	        var _half_width = _content_width / 2;
+            // define sizes
+            var _content_width = $('#content_area').width();
+            var _half_width = _content_width / 2;
 
-	        var _half_height = $('#workstyle_area').height() / 2;
-	        var _tri_height = $('#workstyle_area').height() / 3;
+            var _half_height = $('#workstyle_area').height() / 2;
+            var _tri_height = $('#workstyle_area').height() / 3;
 
-	        // draw 'face_area' area
-	        $('#face_area').css('min-width', _content_width);
-	        $('#face_area').svg({ onLoad: function(svg) {
-	        	//
+            // draw 'face_area' area
+            $('#face_area').css('min-width', _content_width);
+            $('#face_area').svg({
+                onLoad: function(svg) {
+                    //
 
-	            var face_image = new Image();   
-	            face_image.onload = function() {
-	                //
+                    var face_image = new Image();
+                    face_image.onload = function() {
+                        //
 
-	                _face_image_width = this.width;
-	                _face_image_height = this.height;
+                        _face_image_width = this.width;
+                        _face_image_height = this.height;
 
-	                blog_post_height = svg.width() * _face_image_height / _face_image_width;
-	                $('#face_area').css( 'height' , 640 );
+                        blog_post_height = svg.width() * _face_image_height / _face_image_width;
+                        $('#face_area').css('height', 640);
 
-	                _face_image_defs = '<defs><pattern id="face_area_bg" patternUnits="objectBoundingBox" width="1px" height="1px"><image xlink:href="{% static 'images/face_palm.jpg' %}" x="0" y="0" width="'+svg.width()+'px" height="'+blog_post_height+'px" /></pattern></defs>';
-	                $('#face_area svg').html(_face_image_defs);
+                        _face_image_defs = '<defs><pattern id="face_area_bg" patternUnits="objectBoundingBox" width="1px" height="1px"><image xlink:href="{% static 'images/face_palm.jpg ' %}" x="0" y="0" width="' + svg.width() + 'px" height="' + blog_post_height + 'px" /></pattern></defs>';
+                        $('#face_area svg').html(_face_image_defs);
 
-	                $('#face_area svg').attr('id', 'face_area_svg');
-	                $('#face_area svg').css('position', 'absolute');
-	                $('#face_area svg').css('top', 0);
+                        $('#face_area svg').attr('id', 'face_area_svg');
+                        $('#face_area svg').css('position', 'absolute');
+                        $('#face_area svg').css('top', 0);
 
-	                $('#face_area svg').css('height', $('#face_area').height());
+                        $('#face_area svg').css('height', $('#face_area').height());
 
-		            // draw frame
-		            var _width = $('#face_area').width() - 1.0;
-		            var _height = $('#face_area').height() - 1.0;
+                        // draw frame
+                        var _width = $('#face_area').width() - 1.0;
+                        var _height = $('#face_area').height() - 1.0;
 
-		            var _side_height = _height - (0.35 * _width / 2);
+                        var _side_height = _height - (0.35 * _width / 2);
 
-		            var _fill = "url(#face_area_bg)";
+                        var _fill = "url(#face_area_bg)";
 
-					svg.polygon( [[1.0, 1.0],[_width, 1.0],[_width, _side_height],[_width / 2, _height],[1.0, _side_height]],
-					{ fill: _fill, stroke: 'white', strokeWidth: 1.5 });
-	            }
+                        svg.polygon([
+                            [1.0, 1.0],
+                            [_width, 1.0],
+                            [_width, _side_height],
+                            [_width / 2, _height],
+                            [1.0, _side_height]
+                        ], {
+                            fill: _fill,
+                            stroke: 'white',
+                            strokeWidth: 1.5
+                        });
+                    }
 
-	            face_image.src = "{% static 'images/face_palm.jpg' %}";
-	        }});
+                    face_image.src = "{% static 'images/face_palm.jpg' %}";
+                }
+            });
 
-	        $('#face_area svg').css('width', '100%');
+            $('#face_area svg').css('width', '100%');
 
-	        // draw lines
-			var lines_image = new Image();   
-			lines_image.onload = function() {
+            // draw lines
+            var lines_image = new Image();
+            lines_image.onload = function() {
                 //
 
-                var _width = $( window ).width();
+                var _width = $(window).width();
 
                 _lines_image_width = this.width;
                 _lines_image_height = this.height;
 
                 div_height = $('#lines').width() * _lines_image_height / _lines_image_width;
 
-                $('#lines').css( 'width', _width );
-                $('#lines').css( 'height' , div_height );
-                $('#lines').css( 'background-image' , 'url("{% static 'images/lines.svg' %}")' );
+                $('#lines').css('width', _width);
+                $('#lines').css('height', div_height);
+                $('#lines').css('background-image', 'url("{% static 'images/lines.svg ' %}")');
 
                 resized();
             }
 
             lines_image.src = "{% static 'images/lines.svg' %}";
 
-	        // draw 'toolbox_area' area
-	        $('#toolbox_area').svg({ onLoad: function(svg) {
-	            //
+            // draw 'toolbox_area' area
+            $('#toolbox_area').svg({
+                onLoad: function(svg) {
+                    //
 
-	            var _width = $('#toolbox_area').width() - 1.0;
-	            var _height = $('#toolbox_area').height() - 1.0;
+                    var _width = $('#toolbox_area').width() - 1.0;
+                    var _height = $('#toolbox_area').height() - 1.0;
 
-	            var _side_height = _height - _tri_height;
+                    var _side_height = _height - _tri_height;
 
-				svg.polygon( [[1.0, 1.0],[_width, 1.0],[_width, _side_height],[_width / 2, _height],[1.0, _side_height]],
-				{ fill: 'white', stroke: 'white', strokeWidth: 1.5 });
+                    svg.polygon([
+                        [1.0, 1.0],
+                        [_width, 1.0],
+                        [_width, _side_height],
+                        [_width / 2, _height],
+                        [1.0, _side_height]
+                    ], {
+                        fill: 'white',
+                        stroke: 'white',
+                        strokeWidth: 1.5
+                    });
 
-			}});
+                }
+            });
 
-			$('#toolbox_area svg').css('position', 'absolute');
-			$('#toolbox_area svg').css('top', '0');
-			$('#toolbox_area svg').css('left', '0');
+            $('#toolbox_area svg').css('position', 'absolute');
+            $('#toolbox_area svg').css('top', '0');
+            $('#toolbox_area svg').css('left', '0');
 
-	        // draw 'workstyle_area' area
-	        $('#workstyle_area').svg({ onLoad: function(svg) {
-	            //
+            // draw 'workstyle_area' area
+            $('#workstyle_area').svg({
+                onLoad: function(svg) {
+                    //
 
-	            var _width = $('#workstyle_area').width() - 1.0;
-	            var _height = $('#workstyle_area').height() - 1.0;
+                    var _width = $('#workstyle_area').width() - 1.0;
+                    var _height = $('#workstyle_area').height() - 1.0;
 
-				svg.polygon( [[1.0, _tri_height],[_width / 2, 1.0],[_width, _tri_height],[_width, _tri_height * 2],
-					[_width / 2, _height],[1.0, _tri_height * 2]],
-				{ fill: '#F2754B', stroke: '#F2754B', strokeWidth: 1.5 });
+                    svg.polygon([
+                        [1.0, _tri_height],
+                        [_width / 2, 1.0],
+                        [_width, _tri_height],
+                        [_width, _tri_height * 2],
+                        [_width / 2, _height],
+                        [1.0, _tri_height * 2]
+                    ], {
+                        fill: '#F2754B',
+                        stroke: '#F2754B',
+                        strokeWidth: 1.5
+                    });
 
-			}});
+                }
+            });
 
-			$('#workstyle_area svg').css('position', 'absolute');
-			$('#workstyle_area svg').css('z-index', -1);
-			$('#workstyle_area svg').css('top', '0');
-			$('#workstyle_area svg').css('left', '0');
+            $('#workstyle_area svg').css('position', 'absolute');
+            $('#workstyle_area svg').css('z-index', -1);
+            $('#workstyle_area svg').css('top', '0');
+            $('#workstyle_area svg').css('left', '0');
 
-			$('#workstyle_area').css('margin-top', -_half_height);
-			$('#workstyle_area').css('z-index', 1);
+            $('#workstyle_area').css('margin-top', -_half_height);
+            $('#workstyle_area').css('z-index', 1);
 
-	        // draw 'book_area' area
-	        $('#book_area').svg({ onLoad: function(svg) {
-	            //
+            // draw 'book_area' area
+            $('#book_area').svg({
+                onLoad: function(svg) {
+                    //
 
-	            var _width = $('#book_area').width() - 1.0;
-	            var _height = $('#book_area').height() - 1.0;
+                    var _width = $('#book_area').width() - 1.0;
+                    var _height = $('#book_area').height() - 1.0;
 
-	            var _side_height = _height - _tri_height;
+                    var _side_height = _height - _tri_height;
 
-				svg.polygon( [[1.0, 1.0],[_width, 1.0],[_width, _side_height],[_width / 2, _height],[1.0, _side_height]],
-				{ fill: 'white', stroke: 'white', strokeWidth: 1.5 });
+                    svg.polygon([
+                        [1.0, 1.0],
+                        [_width, 1.0],
+                        [_width, _side_height],
+                        [_width / 2, _height],
+                        [1.0, _side_height]
+                    ], {
+                        fill: 'white',
+                        stroke: 'white',
+                        strokeWidth: 1.5
+                    });
 
-			}});
+                }
+            });
 
-			$('#book_area svg').css('position', 'absolute');
-			$('#book_area svg').css('z-index', -1);
-			$('#book_area svg').css('top', '0');
-			$('#book_area svg').css('left', '0');
+            $('#book_area svg').css('position', 'absolute');
+            $('#book_area svg').css('z-index', -1);
+            $('#book_area svg').css('top', '0');
+            $('#book_area svg').css('left', '0');
 
-			$('#book_area').css('margin-top', -(_tri_height + 1.5));
+            $('#book_area').css('margin-top', -(_tri_height + 1.5));
 
-			// set 'book_table' vertical offset
-			$('#book_table').css('margin-top', _tri_height);
+            // set 'book_table' vertical offset
+            $('#book_table').css('margin-top', _tri_height);
 
-	        // draw 'TAIL'
-	        $('#tail').svg({ onLoad: function(svg) {
-	            //
+            // draw 'TAIL'
+            $('#tail').svg({
+                onLoad: function(svg) {
+                    //
 
-	            draw_tail( svg );
-			}});
+                    draw_tail(svg);
+                }
+            });
 
-			$('#tail svg').css('position', 'absolute');
-			$('#tail svg').css('z-index', -1);
-			$('#tail svg').css('top', '0');
-			$('#tail svg').css('left', '0');
+            $('#tail svg').css('position', 'absolute');
+            $('#tail svg').css('z-index', -1);
+            $('#tail svg').css('top', '0');
+            $('#tail svg').css('left', '0');
 
-			// preload toolkit images
-			for (var i = 0; i < 2; ++i) {
-				//
+            // preload toolkit images
+            for (var i = 0; i < 2; ++i) {
+                //
 
-				for (var j = 0; j < 4; ++j) {
-					//
+                for (var j = 0; j < 4; ++j) {
+                    //
 
-					var _source = "{% static 'images/toolkit/' %}" + i + '_' + j + '.png'
-					var item = new Image();
-					item.__uid = i + '_' + j;
-					item.__source = _source;
-		            item.onload = function() { set_toolkit_image(this); }
+                    var _source = "{% static 'images/toolkit/' %}" + i + '_' + j + '.png'
+                    var item = new Image();
+                    item.__uid = i + '_' + j;
+                    item.__source = _source;
+                    item.onload = function() {
+                        set_toolkit_image(this);
+                    }
 
-		            item.src = _source;
-				}
-			}
+                    item.src = _source;
+                }
+            }
 
-	        $(window).resize(resized);
-	        resized();
-	    }
+            $(window).resize(resized);
+            resized();
+        }
 
-	    function draw_tail(svg) {
-	    	//
+        function draw_tail(svg) {
+            //
 
-	        var _tail_head_width = $('#tail').width();
-	        var _tail_head_height = 100;
+            var _tail_head_width = $('#tail').width();
+            var _tail_head_height = 100;
 
-	        var _mid_tail = _tail_head_width / 2;
-	        var _vmid_tail = _tail_head_height / 2;
+            var _mid_tail = _tail_head_width / 2;
+            var _vmid_tail = _tail_head_height / 2;
 
-	        var _tail_width = $('#tail').width() - 1.0;
-	        var _tail_height = $('#tail').height() - 1.0;
+            var _tail_width = $('#tail').width() - 1.0;
+            var _tail_height = $('#tail').height() - 1.0;
 
-				// top romb
-				svg.polygon([
-					[ _mid_tail , 1.0 ],
-					[ _mid_tail + _mid_tail * 0.4 , ( _mid_tail * 0.4 ) * _tail_head_height / _tail_head_width ],
-					[ _mid_tail , _vmid_tail * 0.8 ],
-					[ _mid_tail - _mid_tail * 0.4 , ( _mid_tail * 0.4 ) * _tail_head_height / _tail_head_width ]
-				],
-				{ fill: '#F26F43', stroke: '#F26F43', strokeWidth: 1.5 });
+            // top romb
+            svg.polygon([
+                [_mid_tail, 1.0],
+                [_mid_tail + _mid_tail * 0.4, (_mid_tail * 0.4) * _tail_head_height / _tail_head_width],
+                [_mid_tail, _vmid_tail * 0.8],
+                [_mid_tail - _mid_tail * 0.4, (_mid_tail * 0.4) * _tail_head_height / _tail_head_width]
+            ], {
+                fill: '#F26F43',
+                stroke: '#F26F43',
+                strokeWidth: 1.5
+            });
 
-				// vert black lines
-				g = svg.group( { stroke: 'black' } );
-				svg.line ( g , _mid_tail + _mid_tail * 0.4 , ( _mid_tail * 0.4 ) * _tail_head_height / _tail_head_width ,
-					_mid_tail + _mid_tail * 0.4 , ( _mid_tail * 0.4 ) * _tail_head_height / _tail_head_width + _mid_tail * 0.2 , { strokeWidth: 2 } );
-				svg.line ( g , _mid_tail , _vmid_tail * 0.8 , _mid_tail , _vmid_tail * 0.8 + _mid_tail * 0.2 , { strokeWidth: 2 } );
-				svg.line ( g , _mid_tail - _mid_tail * 0.4 , ( _mid_tail * 0.4 ) * _tail_head_height / _tail_head_width ,
-					_mid_tail - _mid_tail * 0.4 , ( _mid_tail * 0.4 ) * _tail_head_height / _tail_head_width + _mid_tail * 0.2 , { strokeWidth: 2 } );
+            // vert black lines
+            g = svg.group({
+                stroke: 'black'
+            });
+            svg.line(g, _mid_tail + _mid_tail * 0.4, (_mid_tail * 0.4) * _tail_head_height / _tail_head_width,
+                _mid_tail + _mid_tail * 0.4, (_mid_tail * 0.4) * _tail_head_height / _tail_head_width + _mid_tail * 0.2, {
+                    strokeWidth: 2
+                });
+            svg.line(g, _mid_tail, _vmid_tail * 0.8, _mid_tail, _vmid_tail * 0.8 + _mid_tail * 0.2, {
+                strokeWidth: 2
+            });
+            svg.line(g, _mid_tail - _mid_tail * 0.4, (_mid_tail * 0.4) * _tail_head_height / _tail_head_width,
+                _mid_tail - _mid_tail * 0.4, (_mid_tail * 0.4) * _tail_head_height / _tail_head_width + _mid_tail * 0.2, {
+                    strokeWidth: 2
+                });
 
-				// \|
-				svg.line ( g , _mid_tail , _vmid_tail * 0.8 ,
-					_mid_tail - _mid_tail * 1.4 , _vmid_tail * 0.8 - ( _mid_tail * 1.4 ) * _tail_head_height / _tail_head_width , { strokeWidth: 2 } );
-				svg.line ( g , _mid_tail , _vmid_tail * 0.8 ,
-					_mid_tail + _mid_tail * 1.4 , _vmid_tail * 0.8 - ( _mid_tail * 1.4 ) * _tail_head_height / _tail_head_width , { strokeWidth: 2 } );
+            // \|
+            svg.line(g, _mid_tail, _vmid_tail * 0.8,
+                _mid_tail - _mid_tail * 1.4, _vmid_tail * 0.8 - (_mid_tail * 1.4) * _tail_head_height / _tail_head_width, {
+                    strokeWidth: 2
+                });
+            svg.line(g, _mid_tail, _vmid_tail * 0.8,
+                _mid_tail + _mid_tail * 1.4, _vmid_tail * 0.8 - (_mid_tail * 1.4) * _tail_head_height / _tail_head_width, {
+                    strokeWidth: 2
+                });
 
-				// right romb
-				svg.polygon([
-					[ _mid_tail + _mid_tail * 0.6 , ( _mid_tail * 0.6 ) * _tail_head_height / _tail_head_width ],
-					[ _tail_head_width , _vmid_tail + 1.0 ],
-					[ _mid_tail + _mid_tail * 0.6 , _vmid_tail + ( _mid_tail * 0.4 ) * _tail_head_height / _tail_head_width ],
-					[ _mid_tail + _mid_tail * 0.2 , _vmid_tail + 1.0 ]
-				],
-				{ fill: '#F26F43', stroke: '#F26F43', strokeWidth: 1.5 });
+            // right romb
+            svg.polygon([
+                [_mid_tail + _mid_tail * 0.6, (_mid_tail * 0.6) * _tail_head_height / _tail_head_width],
+                [_tail_head_width, _vmid_tail + 1.0],
+                [_mid_tail + _mid_tail * 0.6, _vmid_tail + (_mid_tail * 0.4) * _tail_head_height / _tail_head_width],
+                [_mid_tail + _mid_tail * 0.2, _vmid_tail + 1.0]
+            ], {
+                fill: '#F26F43',
+                stroke: '#F26F43',
+                strokeWidth: 1.5
+            });
 
-				// bottom romb
-				svg.polygon([
-					[ _mid_tail , _tail_head_height * 0.6 ],
-					[ _mid_tail + _mid_tail * 0.4 , _tail_head_height * 0.6 + ( _mid_tail * 0.4 ) * _tail_head_height / _tail_head_width ],
-					[ _mid_tail , _tail_head_height * 0.6  + _vmid_tail * 0.8 ],
-					[ _mid_tail - _mid_tail * 0.4 , _tail_head_height * 0.6 + ( _mid_tail * 0.4 ) * _tail_head_height / _tail_head_width ]
-				],
-				{ fill: '#F26F43', stroke: '#F26F43', strokeWidth: 1.5 });
+            // bottom romb
+            svg.polygon([
+                [_mid_tail, _tail_head_height * 0.6],
+                [_mid_tail + _mid_tail * 0.4, _tail_head_height * 0.6 + (_mid_tail * 0.4) * _tail_head_height / _tail_head_width],
+                [_mid_tail, _tail_head_height * 0.6 + _vmid_tail * 0.8],
+                [_mid_tail - _mid_tail * 0.4, _tail_head_height * 0.6 + (_mid_tail * 0.4) * _tail_head_height / _tail_head_width]
+            ], {
+                fill: '#F26F43',
+                stroke: '#F26F43',
+                strokeWidth: 1.5
+            });
 
-				// left romb
-				svg.polygon([
-					[ _mid_tail * 0.4 , _vmid_tail - ( _mid_tail * 0.4 ) * _tail_head_height / _tail_head_width ],
-					[ _mid_tail * 0.8 , _vmid_tail ],
-					[ _mid_tail * 0.4 , _vmid_tail + ( _mid_tail * 0.4 ) * _tail_head_height / _tail_head_width ],
-					[ 1.0 , _vmid_tail ]
-				],
-				{ fill: '#F26F43', stroke: '#F26F43', strokeWidth: 1.5 });
+            // left romb
+            svg.polygon([
+                [_mid_tail * 0.4, _vmid_tail - (_mid_tail * 0.4) * _tail_head_height / _tail_head_width],
+                [_mid_tail * 0.8, _vmid_tail],
+                [_mid_tail * 0.4, _vmid_tail + (_mid_tail * 0.4) * _tail_head_height / _tail_head_width],
+                [1.0, _vmid_tail]
+            ], {
+                fill: '#F26F43',
+                stroke: '#F26F43',
+                strokeWidth: 1.5
+            });
 
-				// left inner white romb
-				svg.polygon([
-					[ _mid_tail * 0.4 , _vmid_tail - ( _mid_tail * 0.25 ) * _tail_head_height / _tail_head_width ],
-					[ _mid_tail * 0.65 , _vmid_tail ],
-					[ _mid_tail * 0.4 , _vmid_tail + ( _mid_tail * 0.25 ) * _tail_head_height / _tail_head_width ],
-					[ _mid_tail * 0.15 , _vmid_tail ]
-				],
-				{ fill: 'white', stroke: 'white', strokeWidth: 1.5 });
+            // left inner white romb
+            svg.polygon([
+                [_mid_tail * 0.4, _vmid_tail - (_mid_tail * 0.25) * _tail_head_height / _tail_head_width],
+                [_mid_tail * 0.65, _vmid_tail],
+                [_mid_tail * 0.4, _vmid_tail + (_mid_tail * 0.25) * _tail_head_height / _tail_head_width],
+                [_mid_tail * 0.15, _vmid_tail]
+            ], {
+                fill: 'white',
+                stroke: 'white',
+                strokeWidth: 1.5
+            });
 
-				// verticals ( from left to right )
-				svg.polygon([
-					[ 1.0 , _vmid_tail ],
-					[ _mid_tail * 0.4 , _vmid_tail + ( _mid_tail * 0.4 ) * _tail_head_height / _tail_head_width ],
-					[ _mid_tail * 0.4 , _vmid_tail + ( _mid_tail * 0.4 ) * _tail_head_height / _tail_head_width + _tail_height ],
-					[ 1.0 , _vmid_tail + ( _mid_tail * 0.4 ) * _tail_head_height / _tail_head_width + _tail_height ]
-				],
-				{ fill: '#30302F', stroke: 'white', strokeWidth: 1.5 });
+            // verticals ( from left to right )
+            svg.polygon([
+                [1.0, _vmid_tail],
+                [_mid_tail * 0.4, _vmid_tail + (_mid_tail * 0.4) * _tail_head_height / _tail_head_width],
+                [_mid_tail * 0.4, _vmid_tail + (_mid_tail * 0.4) * _tail_head_height / _tail_head_width + _tail_height],
+                [1.0, _vmid_tail + (_mid_tail * 0.4) * _tail_head_height / _tail_head_width + _tail_height]
+            ], {
+                fill: '#30302F',
+                stroke: 'white',
+                strokeWidth: 1.5
+            });
 
-				svg.polygon([
-					[ _mid_tail * 0.4 , _vmid_tail + ( _mid_tail * 0.4 ) * _tail_head_height / _tail_head_width ],
-					[ _mid_tail * 0.6 , _vmid_tail + ( _mid_tail * 0.6 ) * _tail_head_height / _tail_head_width ],
-					[ _mid_tail * 0.6 , _vmid_tail + ( _mid_tail * 0.6 ) * _tail_head_height / _tail_head_width + _tail_height ],
-					[ _mid_tail * 0.4 , _vmid_tail + ( _mid_tail * 0.6 ) * _tail_head_height / _tail_head_width + _tail_height ]
-				],
-				{ fill: 'white', stroke: 'white', strokeWidth: 1.5 });
+            svg.polygon([
+                [_mid_tail * 0.4, _vmid_tail + (_mid_tail * 0.4) * _tail_head_height / _tail_head_width],
+                [_mid_tail * 0.6, _vmid_tail + (_mid_tail * 0.6) * _tail_head_height / _tail_head_width],
+                [_mid_tail * 0.6, _vmid_tail + (_mid_tail * 0.6) * _tail_head_height / _tail_head_width + _tail_height],
+                [_mid_tail * 0.4, _vmid_tail + (_mid_tail * 0.6) * _tail_head_height / _tail_head_width + _tail_height]
+            ], {
+                fill: 'white',
+                stroke: 'white',
+                strokeWidth: 1.5
+            });
 
-				svg.polygon([
-					[ _mid_tail * 0.6 , _vmid_tail + ( _mid_tail * 0.6 ) * _tail_head_height / _tail_head_width ],
-					[ _mid_tail , _vmid_tail + ( _mid_tail ) * _tail_head_height / _tail_head_width ],
-					[ _mid_tail , _vmid_tail + ( _mid_tail ) * _tail_head_height / _tail_head_width + _tail_height ],
-					[ _mid_tail * 0.6 , _vmid_tail + ( _mid_tail ) * _tail_head_height / _tail_head_width + _tail_height ]
-				],
-				{ fill: '#30302F', stroke: 'white', strokeWidth: 1.5 });
+            svg.polygon([
+                [_mid_tail * 0.6, _vmid_tail + (_mid_tail * 0.6) * _tail_head_height / _tail_head_width],
+                [_mid_tail, _vmid_tail + (_mid_tail) * _tail_head_height / _tail_head_width],
+                [_mid_tail, _vmid_tail + (_mid_tail) * _tail_head_height / _tail_head_width + _tail_height],
+                [_mid_tail * 0.6, _vmid_tail + (_mid_tail) * _tail_head_height / _tail_head_width + _tail_height]
+            ], {
+                fill: '#30302F',
+                stroke: 'white',
+                strokeWidth: 1.5
+            });
 
-				svg.polygon([
-					[ _mid_tail , _vmid_tail + ( _mid_tail ) * _tail_head_height / _tail_head_width ],
-					[ _mid_tail * 1.4 , _vmid_tail + ( _mid_tail * 0.6 ) * _tail_head_height / _tail_head_width ],
-					[ _mid_tail * 1.4 , _vmid_tail + ( _mid_tail * 0.6 ) * _tail_head_height / _tail_head_width + _tail_height ],
-					[ _mid_tail , _vmid_tail + ( _mid_tail ) * _tail_head_height / _tail_head_width + _tail_height ]
-				],
-				{ fill: 'black' });
+            svg.polygon([
+                [_mid_tail, _vmid_tail + (_mid_tail) * _tail_head_height / _tail_head_width],
+                [_mid_tail * 1.4, _vmid_tail + (_mid_tail * 0.6) * _tail_head_height / _tail_head_width],
+                [_mid_tail * 1.4, _vmid_tail + (_mid_tail * 0.6) * _tail_head_height / _tail_head_width + _tail_height],
+                [_mid_tail, _vmid_tail + (_mid_tail) * _tail_head_height / _tail_head_width + _tail_height]
+            ], {
+                fill: 'black'
+            });
 
-				svg.polygon([
-					[ _mid_tail * 1.4 , _vmid_tail + ( _mid_tail * 0.6 ) * _tail_head_height / _tail_head_width ],
-					[ _mid_tail * 1.6 , _vmid_tail + ( _mid_tail * 0.4 ) * _tail_head_height / _tail_head_width ],
-					[ _mid_tail * 1.6 , _vmid_tail + ( _mid_tail * 0.4 ) * _tail_head_height / _tail_head_width + _tail_height ],
-					[ _mid_tail * 1.4 , _vmid_tail + ( _mid_tail * 0.6 ) * _tail_head_height / _tail_head_width + _tail_height ]
-				],
-				{ fill: 'white', stroke: 'white', strokeWidth: 1.5 });
+            svg.polygon([
+                [_mid_tail * 1.4, _vmid_tail + (_mid_tail * 0.6) * _tail_head_height / _tail_head_width],
+                [_mid_tail * 1.6, _vmid_tail + (_mid_tail * 0.4) * _tail_head_height / _tail_head_width],
+                [_mid_tail * 1.6, _vmid_tail + (_mid_tail * 0.4) * _tail_head_height / _tail_head_width + _tail_height],
+                [_mid_tail * 1.4, _vmid_tail + (_mid_tail * 0.6) * _tail_head_height / _tail_head_width + _tail_height]
+            ], {
+                fill: 'white',
+                stroke: 'white',
+                strokeWidth: 1.5
+            });
 
-				svg.polygon([
-					[ _mid_tail * 1.6 , _vmid_tail + ( _mid_tail * 0.4 ) * _tail_head_height / _tail_head_width ],
-					[ _mid_tail * 2.0 , _vmid_tail ],
-					[ _mid_tail * 2.0 , _vmid_tail + ( _mid_tail ) * _tail_head_height / _tail_head_width + _tail_height ],
-					[ _mid_tail * 1.6 , _vmid_tail + ( _mid_tail * 0.4 ) * _tail_head_height / _tail_head_width + _tail_height ]
-				],
-				{ fill: 'black' });
-	    }
+            svg.polygon([
+                [_mid_tail * 1.6, _vmid_tail + (_mid_tail * 0.4) * _tail_head_height / _tail_head_width],
+                [_mid_tail * 2.0, _vmid_tail],
+                [_mid_tail * 2.0, _vmid_tail + (_mid_tail) * _tail_head_height / _tail_head_width + _tail_height],
+                [_mid_tail * 1.6, _vmid_tail + (_mid_tail * 0.4) * _tail_head_height / _tail_head_width + _tail_height]
+            ], {
+                fill: 'black'
+            });
+        }
 
-	    function set_toolkit_image(image) {
-	    	//
+        function set_toolkit_image(image) {
+            //
 
-			var width = image.width;
-			var height = image.height;
+            var width = image.width;
+            var height = image.height;
 
-			var source = image.__source;
+            var source = image.__source;
 
-			$('#toolkit_icon_' + image.__uid).css('width', width);
-			$('#toolkit_icon_' + image.__uid).css('background-image', 'url(' + source + ')');
-	    }
+            $('#toolkit_icon_' + image.__uid).css('width', width);
+            $('#toolkit_icon_' + image.__uid).css('background-image', 'url(' + source + ')');
+        }
 
-	</script>
+        $.ajaxSetup({
+            beforeSend: function(xhr, settings) {
+                function getCookie(name) {
+                    var cookieValue = null;
+                    if (document.cookie && document.cookie != '') {
+                        var cookies = document.cookie.split(';');
+                        for (var i = 0; i < cookies.length; i++) {
+                            var cookie = jQuery.trim(cookies[i]);
+                            // Does this cookie string begin with the name we want?
+                            if (cookie.substring(0, name.length + 1) == (name + '=')) {
+                                cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                                break;
+                            }
+                        }
+                    }
+                    return cookieValue;
+                }
+
+                if (!(/^http:.*/.test(settings.url) || /^https:.*/.test(settings.url))) {
+                    // Only send the token to relative URLs i.e. locally.
+                    xhr.setRequestHeader("X-CSRFToken", getCookie('csrftoken'));
+                }
+            }
+        });
+
+        $(document).ready(function($) {
+
+            $("#send_email").submit(function(event) {
+
+                $.ajax({
+                    type: "POST",
+                    url: "{% url 'main_page' %}",
+                    dataType: 'json',
+                    data: {
+                        "user_name": $("#id_user_name").val(),
+                        "user_email": $("#id_user_email").val(),
+                        "user_text": $("#id_user_text").val()
+                    },
+                    success: function(res) {
+                        alert('Спасибо за письмо!');
+                    },
+                    error: function(data) {
+                        alert("Ошибка!");
+                    },
+                });
+
+                event.preventDefault();
+            });
+        });
+
+    </script>
 
 </head>
+
 <body>
-	<div id="face_area"></div>
-	<div id="lines_box" style="position: absolute; overflow: hidden; width: 100%;"><div id="lines"></div></div>
-	<div id="content_area">
-		<div id="toolbox_area">
-			<div id="toolbox">
-				<h1 style="text-align: center;">Я ПОМОГАЮ В ТАКИХ ВОПРОСАХ, КАК</h1>
-				<table id="toolkit">
-					<tbody>
-						<tr>
-							<td><div class="toolkit_icon" id="toolkit_icon_0_0"></div><strong>СТРАХИ</strong></td>
-							<td></td>
-							<td><div class="toolkit_icon" id="toolkit_icon_0_1"></div><strong>КОНФЛИКТНЫЕ СИТУАЦИИ</strong></td>
-							<td></td>
-							<td><div class="toolkit_icon" id="toolkit_icon_0_2"></div><strong>ЭМОЦИОНАЛЬНАЯ<br />ЗАВИСИМОСТЬ</strong></td>
-							<td></td>
-							<td><div class="toolkit_icon" id="toolkit_icon_0_3"></div><strong>ОТНОШЕНИЯ<br />С ПАРТНЕРОМ</strong></td>
-						</tr>
-						<tr>
-							<td><div class="toolkit_icon" id="toolkit_icon_1_0"></div><strong>НИЗКАЯ САМООЦЕНКА</strong></td>
-							<td></td>
-							<td><div class="toolkit_icon" id="toolkit_icon_1_1"></div><strong>ВЗАИМООТНОШЕНИЯ<br />С РОДИТЕЛЯМИ</strong></td>
-							<td></td>
-							<td><div class="toolkit_icon" id="toolkit_icon_1_2"></div><strong>ПСИХОТРАВМА</strong></td>
-							<td></td>
-							<td><div class="toolkit_icon" id="toolkit_icon_1_3"></div><strong>ЭКЗИСТЕНЦИАЛЬНЫЕ<br />ЗАДАЧИ</strong></td>
-						</tr>
-					</tbody>
-				</table>
-			</div>
-		</div>
-		<div id="workstyle_area">
-			<table style="border: 1px solid red; position: relative; width: 628px; margin: 0 auto; color: white; margin-top: 113px;">
-				<tbody>
-					<tr><th colspan="3">КАК Я РАБОТАЮ</th></tr>
-					<tr>
-						<td style="width: 45%; vertical-align: top;"><p style="text-indent: -20px;">Делиться опытом, знаниями, быть в контакте с клиентом, использовать подходящие методики, принимать его не только в кабинете, но и в своём сердце.</p><p style="text-indent: -20px;">В этом моя психотерапия.</p><p style="text-indent: -20px;">В работе я стараюсь избегать желания лечить. Это не значит, что я пассивен и безучастен. Я включаюсь в работу с клиентом ненавязчиво, экологично, с уважением к его внутреннему миру, не стараясь ничего менять сам. Использую все силы и навыки на то, что он сам хочет в себе изменить.</p><p style="text-indent: -20px;">Конечно, это не исключает моего влияния. Я оказываю его своим присутствием, готовностью прояснять то, что понял я, то, что интересно клиенту, и своей обратной связью.</p><p style="text-indent: -20px;">Тем не менее, на протяжении всей работы клиентская ответственность о том, куда он хотел бы продвинуться, остается у него.</p></td>
-						<td style="width: 10%;"></td>
-						<td style="width: 45%; vertical-align: top;"><p style="text-indent: -20px;">Одно из требований к психотерапевту - быть искренним. На самом деле, это не требование, а роскошь! Я могу и обязан быть искренним со своими клиентами, ведь это неотъемлемая часть сессии. Как правило, при честном искреннем отношении работа двигается намного быстрее.</p><p style="text-indent: -20px;">Терапевтический процесс - это встреча, где раскрываются многие аспекты способа пребывания в мире моего клиента. Когда мы работаем, клиент предлагает мне некоторые проблемы, я задаю правильные вопросы, чтобы раскрыть весь смысл этих проблем. Я всегда стараюсь делать акцент на раскрытие проблемы.</p><div id="methods_button">МОИ МЕТОДЫ</div></td>
-					</tr>
-				</tbody>
-			</table>
-		</div>
-		<div id="book_area">
-			<table id="book_table" style="width: 1036px; border: 1px dashed black; margin: 0 auto; border-collapse: collapse;">
-				<tbody>
-					<tr>
-						<th style="width: 45%;"><div style="margin-top: 50px;">ОТЗЫВЫ ОБО МНЕ</div></th>
-						<th style="width: 5%; border-right: 2px solid black;">center space</th>
-						<th style="width: 5%;">center space</th>
-						<th style="width: 45%;"><div style="margin-top: 50px;">ОНЛАЙН-КОНСУЛЬТАЦИЯ</div></th>
-					</tr>
-					<tr>
-						<td style="width: 45%; border: 1px dashed red; vertical-align: top;">
-							<table>
-								<tbody>
-									<tr>
-										<td style="border: 1px dashed green; vertical-align: top;"><img src="{% static 'images/avatar_ph.png' %}" /></td>
-										<td style="width: 20px;"></td>
-										<td style="background-color: #FFF000;">454444444444444444444444444444444446464644464565456456461874444444444</td>
-									</tr>
-								</tbody>
-							</table>
-						</td>
-						<td style="width: 5%; border-right: 2px solid black;">center space</td>
-						<td style="width: 5%;">center space</td>
-						<td style="width: 45%;">
-							<p>Чтобы записаться ко мне на консультацию, достаточно заполнить эту простую форму и я перезвоню/отвечу Вам в течении суток.</p><br /><input type="text" value="ВАШЕ ИМЯ *" style="width: 100%;" /><input type="text" value="E-MAIL *" style="width: 100%;" /><textarea style="width: 100%; resize: none;"></textarea>
-							<table><tbody>
-								<tr>
-									<td style="color: #F2754B;">* поля, обязательные для заполнения</td>
-									<td><div id="book_button">ОТПРАВИТЬ</div></td>
-								</tr>
-							</tbody></table>
-						</td>
-					</tr>
-				</tbody>
-			</table>
-		</div>
-		<div id="tail"></div>
-		<div id="footer_area"></div>
-	</div>
+    <div id="face_area"></div>
+    <div id="lines_box" style="position: absolute; overflow: hidden; width: 100%;">
+        <div id="lines"></div>
+    </div>
+    <div id="content_area">
+        <div id="toolbox_area">
+            <div id="toolbox">
+                <h1 style="text-align: center;">Я ПОМОГАЮ В ТАКИХ ВОПРОСАХ, КАК</h1>
+                <table id="toolkit">
+                    <tbody>
+                        <tr>
+                            <td>
+                                <div class="toolkit_icon" id="toolkit_icon_0_0"></div><strong>СТРАХИ</strong>
+                            </td>
+                            <td></td>
+                            <td>
+                                <div class="toolkit_icon" id="toolkit_icon_0_1"></div><strong>КОНФЛИКТНЫЕ СИТУАЦИИ</strong>
+                            </td>
+                            <td></td>
+                            <td>
+                                <div class="toolkit_icon" id="toolkit_icon_0_2"></div><strong>ЭМОЦИОНАЛЬНАЯ<br />ЗАВИСИМОСТЬ</strong>
+                            </td>
+                            <td></td>
+                            <td>
+                                <div class="toolkit_icon" id="toolkit_icon_0_3"></div><strong>ОТНОШЕНИЯ<br />С ПАРТНЕРОМ</strong>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>
+                                <div class="toolkit_icon" id="toolkit_icon_1_0"></div><strong>НИЗКАЯ САМООЦЕНКА</strong>
+                            </td>
+                            <td></td>
+                            <td>
+                                <div class="toolkit_icon" id="toolkit_icon_1_1"></div><strong>ВЗАИМООТНОШЕНИЯ<br />С РОДИТЕЛЯМИ</strong>
+                            </td>
+                            <td></td>
+                            <td>
+                                <div class="toolkit_icon" id="toolkit_icon_1_2"></div><strong>ПСИХОТРАВМА</strong>
+                            </td>
+                            <td></td>
+                            <td>
+                                <div class="toolkit_icon" id="toolkit_icon_1_3"></div><strong>ЭКЗИСТЕНЦИАЛЬНЫЕ<br />ЗАДАЧИ</strong>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+        <div id="workstyle_area">
+            <table style="border: 1px solid red; position: relative; width: 628px; margin: 0 auto; color: white; margin-top: 113px;">
+                <tbody>
+                    <tr>
+                        <th colspan="3">КАК Я РАБОТАЮ</th>
+                    </tr>
+                    <tr>
+                        <td style="width: 45%; vertical-align: top;">
+                            <p style="text-indent: -20px;">Делиться опытом, знаниями, быть в контакте с клиентом, использовать подходящие методики, принимать его не только в кабинете, но и в своём сердце.</p>
+                            <p style="text-indent: -20px;">В этом моя психотерапия.</p>
+                            <p style="text-indent: -20px;">В работе я стараюсь избегать желания лечить. Это не значит, что я пассивен и безучастен. Я включаюсь в работу с клиентом ненавязчиво, экологично, с уважением к его внутреннему миру, не стараясь ничего менять сам. Использую все силы и навыки на то, что он сам хочет в себе изменить.</p>
+                            <p style="text-indent: -20px;">Конечно, это не исключает моего влияния. Я оказываю его своим присутствием, готовностью прояснять то, что понял я, то, что интересно клиенту, и своей обратной связью.</p>
+                            <p style="text-indent: -20px;">Тем не менее, на протяжении всей работы клиентская ответственность о том, куда он хотел бы продвинуться, остается у него.</p>
+                        </td>
+                        <td style="width: 10%;"></td>
+                        <td style="width: 45%; vertical-align: top;">
+                            <p style="text-indent: -20px;">Одно из требований к психотерапевту - быть искренним. На самом деле, это не требование, а роскошь! Я могу и обязан быть искренним со своими клиентами, ведь это неотъемлемая часть сессии. Как правило, при честном искреннем отношении работа двигается намного быстрее.</p>
+                            <p style="text-indent: -20px;">Терапевтический процесс - это встреча, где раскрываются многие аспекты способа пребывания в мире моего клиента. Когда мы работаем, клиент предлагает мне некоторые проблемы, я задаю правильные вопросы, чтобы раскрыть весь смысл этих проблем. Я всегда стараюсь делать акцент на раскрытие проблемы.</p>
+                            <div id="methods_button">МОИ МЕТОДЫ</div>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+        <div id="book_area">
+            <table id="book_table" style="width: 1036px; border: 1px dashed black; margin: 0 auto; border-collapse: collapse;">
+                <tbody>
+                    <tr>
+                        <th style="width: 45%;">
+                            <div style="margin-top: 50px;">ОТЗЫВЫ ОБО МНЕ</div>
+                        </th>
+                        <th style="width: 5%; border-right: 2px solid black;">center space</th>
+                        <th style="width: 5%;">center space</th>
+                        <th style="width: 45%;">
+                            <div style="margin-top: 50px;">ОНЛАЙН-КОНСУЛЬТАЦИЯ</div>
+                        </th>
+                    </tr>
+                    <tr>
+                        <td style="width: 45%; border: 1px dashed red; vertical-align: top;">
+                            <table>
+                                <tbody>
+                                    <tr>
+                                        <td style="border: 1px dashed green; vertical-align: top;"><img src="{% static 'images/avatar_ph.png' %}" />
+                                        </td>
+                                        <td style="width: 20px;"></td>
+                                        <td style="background-color: #FFF000;">454444444444444444444444444444444446464644464565456456461874444444444</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </td>
+                        <td style="width: 5%; border-right: 2px solid black;">center space</td>
+                        <td style="width: 5%;">center space</td>
+                        <td style="width: 45%;">
+                            <p>Чтобы записаться ко мне на консультацию, достаточно заполнить эту простую форму и я перезвоню/отвечу Вам в течении суток.</p>
+                            <br />
+                            <form id="send_email" method="POST">
+                                <table>
+                                    {{ form.as_table }}
+                                    <tr>
+                                        <td>* поля, обязательные для заполнения</td>
+                                        <td>
+                                            <button>Отправить</button>
+                                        </td>
+                                    </tr>
+                                </table>
+                            </form>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+        <div id="tail"></div>
+        <div id="footer_area"></div>
+    </div>
 </body>
+
 </html>

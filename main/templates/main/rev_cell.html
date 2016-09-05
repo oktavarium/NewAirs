@@ -1,148 +1,167 @@
 <html>
+
 <head>
 
-	{% load static %}
-	<meta charset="UTF-8" />
+    {% load static %}
+    <meta charset="UTF-8" />
 
-	<link rel="stylesheet" type='text/css' href="{% static 'css/reviews.css' %}">
+    <link rel="stylesheet" type='text/css' href="{% static 'css/reviews.css' %}">
 
-	<script type="text/javascript" src="{% static 'js/jquery-2.1.4.min.js' %}"></script>
+    <script type="text/javascript" src="{% static 'js/jquery-2.1.4.min.js' %}"></script>
 
-	<script>
+    <script>
+        function resized() {}
 
-		function resized() {}
+        window.onload = function() {
+            //
 
-	    window.onload = function(){
-	        //
+            ;
+        }
+    </script>
 
-	        ;
-	    }
-
-	</script>
-
-	<style>
-
-	h1 { text-align: center; }
-		
-	div#review_box {
-
-		position: relative;
-
-		width: 900px;
-		margin: 0 auto;
-
-		border: 1px solid red;
-	}
-
-	div.review_cell {
-
-		position: relative;
-
-		width: 100%;
-
-		border: 1px solid magenta;
-		vertical-align: top;
-	}
-
-	div.info_side {
-
-		position: relative;
-		left: 0px;
-
-		width: 150px;
-		display: inline-block;
-
-		border: 1px dashed lime;
-		vertical-align: top;
-	}
-
-	div.avatar {
-
-		position: relative;
-
-		width: 100px;
-		height: 100px;
-
-		margin: 0 auto;
-
-		background-color: black;
-	}
-
-	div.content_side {
-
-		position: relative;
-		width: calc( 100% - 160px );
-		top: 0px;
-
-		display: inline-block;
-		border: 1px solid olive;
-	}
-
-	div.review_panel {
-
-		width: 100%;
-		height: 32px;
-
-		border: 1px dotted red;
-	}
-
-	div.review_content {
-
-		width: 100%;
-		border: 1px dotted black;
-	}
-
-	</style>
+    <style>
+        h1 {
+            text-align: center;
+        }
+        div#review_box {
+            position: relative;
+            width: 900px;
+            margin: 0 auto;
+            border: 1px solid red;
+        }
+        div.review_cell {
+            position: relative;
+            width: 100%;
+            border: 1px solid magenta;
+            vertical-align: top;
+        }
+        div.info_side {
+            position: relative;
+            left: 0px;
+            width: 150px;
+            display: inline-block;
+            border: 1px dashed lime;
+            vertical-align: top;
+        }
+        div.avatar {
+            position: relative;
+            width: 100px;
+            height: 100px;
+            margin: 0 auto;
+            background-color: black;
+        }
+        div.content_side {
+            position: relative;
+            width: calc( 100% - 160px);
+            top: 0px;
+            display: inline-block;
+            border: 1px solid olive;
+        }
+        div.review_panel {
+            width: 100%;
+            height: 32px;
+            border: 1px dotted red;
+        }
+        div.review_content {
+            width: 100%;
+            border: 1px dotted black;
+        }
+    </style>
 
 </head>
+
 <body>
-	<div id="page">
+    <div id="page">
 
-	<div id ="review_box">
-		<h1>Reviews</h1>
-
-		<div class="review_cell">
-
-			<div class="info_side">
-				<div class="avatar"></div>
+        {% block content %}
+			<div class="container-fluid" id="content">
+				{% include 'main/reviews_content.html' %}
 			</div>
-			<div class="content_side">
+        {% endblock content %}
 
-				<div class="review_panel"></div>
-				<div class="review_content">
+        <script>
+            $.ajaxSetup({
+                beforeSend: function(xhr, settings) {
+                    function getCookie(name) {
+                        var cookieValue = null;
+                        if (document.cookie && document.cookie != '') {
+                            var cookies = document.cookie.split(';');
+                            for (var i = 0; i < cookies.length; i++) {
+                                var cookie = jQuery.trim(cookies[i]);
+                                // Does this cookie string begin with the name we want?
+                                if (cookie.substring(0, name.length + 1) == (name + '=')) {
+                                    cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                                    break;
+                                }
+                            }
+                        }
+                        return cookieValue;
+                    }
 
-					// My review
+                    if (!(/^http:.*/.test(settings.url) || /^https:.*/.test(settings.url))) {
+                        // Only send the token to relative URLs i.e. locally.
+                        xhr.setRequestHeader("X-CSRFToken", getCookie('csrftoken'));
+                    }
+                }
+            });
 
-					<div class="review_cell">
+            $(document).ready(function($) {
 
-						<div class="info_side">
-							<div class="avatar"></div>
-						</div>
-						<div class="content_side">
+                $("#post_review").submit(function(event) {
 
-							<div class="review_panel"></div>
-							<div class="review_content">
-								// Anthony answer
-							</div>
-						</div>
-					</div>
+                    $.ajax({
+                        type: "POST",
+                        url: "{% url 'reviews' %}",
+                        dataType: 'json',
+                        data: {
+                            "user_name": $("#id_user_name").val(),
+                            "user_town": $("#id_user_town").val(),
+                            "user_text": $("#id_user_text").val()
+                        },
+                        success: function(res) {
+                            alert('Спасибо за отзыв!');
+                        },
+                        error: function(data) {
+                            alert("Ошибка!");
+                        },
+                    });
 
-				</div>
-			</div>
-		</div>
-	</div>
+                    event.preventDefault();
+                });
 
-	<form id="post_review" method="post" action="#">
-		<h1>ОСТАВИТЬ ОТЗЫВ</h1><br />
-		<span>Буду признателен, если Вы напишете своё мнение о моей работе. Все отзывы проходят модерацию.</span><br />
-		<input type="text" value="name" /><br /><br />
-		<input type="text" value="email" /><br /><br />
-		<input type="text" value="city" /><br /><br />
-		<textarea>Ваш отзыв</textarea>
-		<table><tr><td>* поля, обязательные для заполнения</td>
-		<td><button id="send">ОТПРАВИТЬ</button></td></tr></table>
-	</form>
+                $(document).on('click', '.page', function(event) {
+                    event.preventDefault();
+                    var page = $(this).attr('data-page');
+                    alert(page)
+                    $.ajax({
+                        type: "GET",
+                        url: "{% url 'reviews' %}",
+                        data: { 'page': page, },
+                        dataType: "html",
+                        success: function(data) {
+                            $('#content').html(data);
+                        }
+                    });
+                });
+            });
+        </script>
 
-	</div>
+        <form id="post_review" method="POST">
+            <h1>ОСТАВИТЬ ОТЗЫВ</h1>
+            <br />
+            <span>Буду признателен, если Вы напишете своё мнение о моей работе. Все отзывы проходят модерацию.</span>
+            <br />
+            <table>
+                {{ form.as_table }}
+                <tr>
+                    <td>* поля, обязательные для заполнения</td>
+                    <td>
+                        <button>Отправить</button>
+                    </td>
+                </tr>
+            </table>
+        </form>
+    </div>
 </body>
+
 </html>

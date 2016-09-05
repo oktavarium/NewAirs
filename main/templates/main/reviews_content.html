@@ -1,0 +1,50 @@
+<div id="review_box">
+    <h1>Reviews</h1>
+    {% for review in reviews %}
+        <div class="review_cell">
+            <div class="info_side">
+                <div class="avatar"></div>
+            </div>
+            <div class="content_side">
+                <div class="review_panel">
+                    {{ review.user_name }} {{ review.user_town }}
+                </div>
+                <div class="review_content">
+                    {{ review.user_text }} {% if review.answer_text %}
+                    <div class="review_cell">
+                        <div class="info_side">
+                            <div class="avatar"></div>
+                        </div>
+                        <div class="content_side">
+                            <div class="review_panel"></div>
+                            <div class="review_content">
+                                {{ review.answer_text }}
+                            </div>
+                        </div>
+                    </div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+        {% empty %}
+        <li>No articles yet.</li>
+    {% endfor %}
+    {% if is_paginated %}
+        <ul class="pagination">
+            <li><a class="page" data-page="1" href="?page=1">Первая</a>
+            </li>
+            {% if page_obj.has_previous %}
+            <li><a class="page" data-page="{{ page_obj.previous_page_number }}" href="?page={{ page_obj.previous_page_number }}">&laquo;</a>
+            </li>
+            {% endif %}
+            <li class="active"><a href="#">{{ page_obj.number }}</a>
+            </li>
+            {% if page_obj.has_next %}
+            <li><a class="page" data-page="{{ page_obj.next_page_number }}" href="?page={{ page_obj.next_page_number }}">&raquo;</a>
+            </li>
+            {% endif %}
+            <li><a class="page" data-page="{{ page_obj.paginator.num_pages }}" href="?page={{ paginator.num_pages }}">Последняя</a>
+            </li>
+        </ul>
+    {% endif %}
+</div>

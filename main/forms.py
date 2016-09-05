@@ -1,15 +1,17 @@
 from django import forms
+from . import models
 
 
-class ReviewForm(forms.Form):
-    user_name = forms.CharField(label="Имя:")
-    user_town = forms.CharField(label="Город:")
-    user_text = forms.CharField(label="Отзыв:", widget=forms.Textarea)
+class ReviewForm(forms.ModelForm):
+    class Meta:
+        model = models.Review
+        exclude = ["answer_text", "created_date", "confirmed"]
+        widgets = {'user_text': forms.Textarea(attrs={'style': 'resize:none;'}),}
 
-    def save_review(self):
-        print(self.user_name, self.user_town, self.user_text)
 
-    def is_valid(self):
-        valid = super(ReviewForm, self).is_valid()
-        print("CHECK VALID", self.cleaned_data, valid)
-        return False
+class EmailForm(forms.ModelForm):
+    class Meta:
+        model = models.Email
+        exclude = ["created_date"]
+        widgets = {'user_text': forms.Textarea(attrs={'style': 'resize:none;'}),}
+
