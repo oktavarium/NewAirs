@@ -31,7 +31,7 @@ class MainView(TemplateView):
                 )
                 return JsonResponse({'result': 'OK'}, status=200)
             else:
-                return JsonResponse({'result': 'Error'}, status=400)
+                return JsonResponse(form.errors, status=400)
 
 
 def about_me(request):
@@ -67,7 +67,7 @@ class ReviewView(ListView):
                 form.save()
                 return JsonResponse({'result': 'OK'}, status=200)
             else:
-                return JsonResponse({'result': 'Error'}, status=400)
+                return JsonResponse(form.errors, status=400)
 
     def get(self, request, **kwargs):
         if request.is_ajax():

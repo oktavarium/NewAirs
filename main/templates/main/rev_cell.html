@@ -108,7 +108,7 @@
             $(document).ready(function($) {
 
                 $("#post_review").submit(function(event) {
-
+					document.getElementById("post_review_btn").disabled = true;
                     $.ajax({
                         type: "POST",
                         url: "{% url 'reviews' %}",
@@ -119,9 +119,11 @@
                             "user_text": $("#id_user_text").val()
                         },
                         success: function(res) {
+                        	document.getElementById("post_review").reset()
                             alert('Спасибо за отзыв!');
                         },
                         error: function(data) {
+                        	document.getElementById("post_review_btn").disabled = false;
                             alert("Ошибка!");
                         },
                     });
@@ -156,7 +158,7 @@
                 <tr>
                     <td>* поля, обязательные для заполнения</td>
                     <td>
-                        <button>Отправить</button>
+                        <button id="post_review_btn">Отправить</button>
                     </td>
                 </tr>
             </table>

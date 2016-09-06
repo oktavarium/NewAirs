@@ -494,7 +494,7 @@
         $(document).ready(function($) {
 
             $("#send_email").submit(function(event) {
-
+                document.getElementById("send_email_btn").disabled = true;
                 $.ajax({
                     type: "POST",
                     url: "{% url 'main_page' %}",
@@ -505,14 +505,16 @@
                         "user_text": $("#id_user_text").val()
                     },
                     success: function(res) {
-                        alert('Спасибо за письмо!');
+                        document.getElementById("send_email").reset()
+                        alert('Спасибо за письмо!')
                     },
                     error: function(data) {
-                        alert("Ошибка!");
+                        document.getElementById("send_email_btn").disabled = false;
+                        alert("Ошибка!")
                     },
                 });
 
-                event.preventDefault();
+                event.preventDefault()
             });
         });
 
@@ -630,7 +632,7 @@
                                     <tr>
                                         <td>* поля, обязательные для заполнения</td>
                                         <td>
-                                            <button>Отправить</button>
+                                            <button id="send_email_btn">Отправить</button>
                                         </td>
                                     </tr>
                                 </table>
