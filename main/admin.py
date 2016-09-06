@@ -23,9 +23,7 @@ class ReviewAdmin(admin.ModelAdmin):
 
 
 class AboutMeAdmin(admin.ModelAdmin):
-    list_display = ("user_name", "user_mail", "user_phone", "user_insta", "user_skype", "user_periskop",
-                    "user_vk", "user_fb", "user_tw", "user_copyright")
-    exclude = ("user_unique",)
+    list_display = ("user_field", "user_data")
 
 
 class StoryAdmin(admin.ModelAdmin):

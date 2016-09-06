@@ -43,19 +43,23 @@ class Email(models.Model):
 
 
 class AboutMe(models.Model):
-    user_unique = models.CharField(default="unique", max_length=100, primary_key=True)
-    user_name = models.CharField(max_length=100, verbose_name="Имя")
-    user_mail = models.EmailField(max_length= 100, verbose_name="Почта")
-    user_phone = models.CharField(max_length=100, verbose_name="Телефон")
-    user_insta = models.CharField(max_length=100, verbose_name="Инстаграм")
-    user_skype = models.CharField(max_length=100, verbose_name="Скайп")
-    user_periskop = models.CharField(max_length=100, verbose_name="Перископ")
-    user_vk = models.CharField(max_length=100, verbose_name="ВК")
-    user_fb = models.CharField(max_length=100, verbose_name="FB")
-    user_tw = models.CharField(max_length=100, verbose_name="Twitter")
-    user_copyright = models.TextField(default="", verbose_name="Копирайт")
-    about_text = models.TextField(default="", verbose_name="Общее описание обо мне")
-    about_short_text = models.TextField(default="", verbose_name="Короткое описание обо мне")
+    data_fields = (
+        ("name", "Имя"),
+        ("email", "Email"),
+        ("phone", "Телефон"),
+        ("instagram", "Instagram"),
+        ("skype", "Skype"),
+        ("periskop", "Periskop"),
+        ("vk", "Vk"),
+        ("fb", "Fb"),
+        ("copyright", "Copyright"),
+        ("twitter", "Twitter"),
+        ("about_me", "Обо мне"),
+        ("about_me_short", "Обо мне коротко"),
+    )
+    user_field = models.CharField(max_length=30, primary_key=True,default="name",
+                                  verbose_name="Выберите раздел", choices=data_fields)
+    user_data = models.CharField(max_length=1000, verbose_name="Данные", default="")
 
     class Meta():
         verbose_name = "Обо мне"
@@ -65,7 +69,7 @@ class AboutMe(models.Model):
         self.save()
 
     def __str__(self):
-        return self.user_name
+        return self.user_field
 
 
 class Story(models.Model):

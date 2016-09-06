@@ -5,7 +5,7 @@ from django.views.generic.edit import FormView
 from django.views.generic import ListView, TemplateView
 from main.forms import ReviewForm, EmailForm
 from main.models import Review, Email
-
+from newairs import settings
 
 class MainView(TemplateView):
     template_name = "main/home.html"
@@ -25,11 +25,14 @@ class MainView(TemplateView):
                     'New message from site by {0} [{1}]'.format(request.POST["user_name"],
                                                                 request.POST["user_email"]),
                     request.POST["user_text"],
-                    'newairs.psycho@yandex.ru',
-                    ['newairs.psycho@yandex.ru'],
+                    settings.EMAIL_HOST_USER,
+                    [settings.EMAIL_HOST_USER],
                     fail_silently=True,
                 )
-                return JsonResponse({'result': 'OK'}, status=200)
+                max_age = 365 * 24 * 60 * 60  # one year
+                response = JsonResponse({'result': 'OK'}, status=200)
+                response.set_cookie('email_sent', 'true', max_age=max_age)
+                return response
             else:
                 return JsonResponse(form.errors, status=400)
 
@@ -65,7 +68,10 @@ class ReviewView(ListView):
             form = ReviewForm(request.POST)
             if form.is_valid():
                 form.save()
-                return JsonResponse({'result': 'OK'}, status=200)
+                max_age = 365 * 24 * 60 * 60  # one year
+                response = JsonResponse({'result': 'OK'}, status=200)
+                response.set_cookie('review_posted', 'true', max_age=max_age)
+                return response
             else:
                 return JsonResponse(form.errors, status=400)
 
