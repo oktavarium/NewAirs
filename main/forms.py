@@ -12,6 +12,6 @@ class ReviewForm(forms.ModelForm):
 class EmailForm(forms.ModelForm):
     class Meta:
         model = models.Email
-        exclude = ["created_date"]
-        widgets = {'user_text': forms.Textarea(attrs={'style': 'resize:none;'}),}
+        exclude = ["created_date", "to_main"]
+        widgets = {'user_text': forms.Textarea(attrs={'style': 'resize:none;'})}
 

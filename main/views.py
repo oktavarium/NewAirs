@@ -22,10 +22,11 @@ class MainView(TemplateView):
             if form.is_valid():
                 form.save()
                 send_mail(
-                    'New message from site by %s' % request.POST["user_name"],
+                    'New message from site by {0} [{1}]'.format(request.POST["user_name"],
+                                                                request.POST["user_email"]),
                     request.POST["user_text"],
-                    request.POST["user_email"],
-                    ['van.denisenko@gmail.com'],
+                    'newairs.psycho@yandex.ru',
+                    ['newairs.psycho@yandex.ru'],
                     fail_silently=True,
                 )
                 return JsonResponse({'result': 'OK'}, status=200)
@@ -43,6 +44,7 @@ def toolbox(request):
 
 def news(request):
     return HttpResponse("News")
+
 
 class ReviewView(ListView):
     model = Review
@@ -73,6 +75,7 @@ class ReviewView(ListView):
             context = self.get_context_data(**kwargs)
             return render(request, "main/reviews_content.html", context)
         return super(ReviewView, self).get(request, **kwargs)
+
 
 def contacts(request):
     return HttpResponse("Contacts")
