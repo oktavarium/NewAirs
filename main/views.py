@@ -1,10 +1,9 @@
 from django.shortcuts import render
 from django.core.mail import send_mail
 from django.http import HttpResponse, JsonResponse
-from django.views.generic.edit import FormView
 from django.views.generic import ListView, TemplateView
 from main.forms import ReviewForm, EmailForm
-from main.models import Review, Email
+from main.models import Review, AboutMe
 from newairs import settings
 
 class MainView(TemplateView):
@@ -14,6 +13,7 @@ class MainView(TemplateView):
         context = super(MainView, self).get_context_data(**kwargs)
         context['form'] = EmailForm()
         context['reviews'] = Review.objects.filter(to_main=True).order_by('-created_date')[:2]
+        #context['copyright'] = AboutMe.objects.filter(user_field="copyright").values()[0]["user_data"]
         return context
 
     def post(self, request):
